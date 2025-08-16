@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTrips } from "./TripsContext";
 
 export default function MyJournal({ user }) {
   const navigate = useNavigate();
+  const { trips, addTrip, updateTrip, deleteTrip } = useTrips();
+
+  const [newTrip, setNewTrip] = useState("");
+  const [editId, setEditId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
 
   useEffect(() => {
     if (!user) {
@@ -11,32 +17,19 @@ export default function MyJournal({ user }) {
     }
   }, [user, navigate]);
 
-  const [trips, setTrips] = useState([
-    { id: 1, title: "Paris Adventure", date: "2023-06-10" },
-    { id: 2, title: "Hiking in Armenia", date: "2023-07-20" },
-  ]);
-
-  const [newTrip, setNewTrip] = useState("");
-  const [editId, setEditId] = useState(null);
-  const [editTitle, setEditTitle] = useState("");
-
-  const addTrip = (e) => {
+  const handleAdd = (e) => {
     e.preventDefault();
     if (newTrip.trim()) {
-      setTrips((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          title: newTrip,
-          date: new Date().toISOString().slice(0, 10),
-        },
-      ]);
+      addTrip({
+        title: newTrip,
+        location: "Unknown",
+        date: new Date().toISOString().slice(0, 10),
+        description: "No description",
+        image:
+          "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+      });
       setNewTrip("");
     }
-  };
-
-  const deleteTrip = (id) => {
-    setTrips(trips.filter((t) => t.id !== id));
   };
 
   const startEdit = (trip) => {
@@ -45,9 +38,7 @@ export default function MyJournal({ user }) {
   };
 
   const saveEdit = () => {
-    setTrips((prev) =>
-      prev.map((t) => (t.id === editId ? { ...t, title: editTitle } : t))
-    );
+    updateTrip(editId, { title: editTitle });
     setEditId(null);
     setEditTitle("");
   };
@@ -56,13 +47,11 @@ export default function MyJournal({ user }) {
     <div
       style={{
         minHeight: "100vh",
+        padding: "40px 20px",
+        color: "white",
         backgroundImage: `url("https://www.muchbetteradventures.com/magazine/content/images/2024/04/mount-everest-at-sunset.jpg")`,
-        backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        padding: "40px 20px",
-        boxSizing: "border-box",
-        color: "white",
       }}
     >
       <h1
@@ -72,7 +61,7 @@ export default function MyJournal({ user }) {
       </h1>
 
       <form
-        onSubmit={addTrip}
+        onSubmit={handleAdd}
         style={{
           maxWidth: "600px",
           margin: "0 auto 40px auto",
@@ -91,7 +80,6 @@ export default function MyJournal({ user }) {
             borderRadius: "12px",
             border: "none",
             fontSize: "16px",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
             outline: "none",
           }}
         />
@@ -104,10 +92,7 @@ export default function MyJournal({ user }) {
             backgroundColor: "#007bff",
             fontWeight: "bold",
             cursor: "pointer",
-            transition: "background-color 0.3s ease",
           }}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "#0056b3")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "#007bff")}
         >
           Add
         </button>
@@ -129,10 +114,6 @@ export default function MyJournal({ user }) {
               backgroundColor: "rgba(255,255,255,0.1)",
               borderRadius: "12px",
               padding: "20px",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
               color: "white",
             }}
           >
@@ -146,30 +127,21 @@ export default function MyJournal({ user }) {
                     padding: "12px",
                     borderRadius: "8px",
                     border: "none",
-                    fontSize: "16px",
-                    outline: "none",
                   }}
                 />
-                <div style={{ display: "flex", gap: "10px" }}>
+                <div
+                  style={{ display: "flex", gap: "10px", marginTop: "10px" }}
+                >
                   <button
                     onClick={saveEdit}
                     style={{
                       flex: 1,
                       padding: "12px",
-                      borderRadius: "8px",
-                      border: "none",
                       backgroundColor: "#28a745",
-                      fontWeight: "bold",
-                      cursor: "pointer",
                       color: "white",
-                      transition: "background-color 0.3s ease",
+                      border: "none",
+                      borderRadius: "8px",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#1e7e34")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "#28a745")
-                    }
                   >
                     Save
                   </button>
@@ -178,20 +150,11 @@ export default function MyJournal({ user }) {
                     style={{
                       flex: 1,
                       padding: "12px",
-                      borderRadius: "8px",
-                      border: "none",
                       backgroundColor: "#dc3545",
-                      fontWeight: "bold",
-                      cursor: "pointer",
                       color: "white",
-                      transition: "background-color 0.3s ease",
+                      border: "none",
+                      borderRadius: "8px",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#b02a37")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "#dc3545")
-                    }
                   >
                     Cancel
                   </button>
@@ -199,38 +162,18 @@ export default function MyJournal({ user }) {
               </>
             ) : (
               <>
-                <div style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
-                  {trip.title}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    fontStyle: "italic",
-                    marginBottom: "10px",
-                  }}
-                >
-                  {new Date(trip.date).toLocaleDateString()}
-                </div>
+                <h3>{trip.title}</h3>
+                <p>{new Date(trip.date).toLocaleDateString()}</p>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <button
                     onClick={() => startEdit(trip)}
                     style={{
                       flex: 1,
                       padding: "12px",
-                      borderRadius: "8px",
-                      border: "none",
                       backgroundColor: "#ffc107",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      color: "#212529",
-                      transition: "background-color 0.3s ease",
+                      border: "none",
+                      borderRadius: "8px",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#d39e00")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "#ffc107")
-                    }
                   >
                     Edit
                   </button>
@@ -239,20 +182,11 @@ export default function MyJournal({ user }) {
                     style={{
                       flex: 1,
                       padding: "12px",
-                      borderRadius: "8px",
-                      border: "none",
                       backgroundColor: "#dc3545",
-                      fontWeight: "bold",
-                      cursor: "pointer",
                       color: "white",
-                      transition: "background-color 0.3s ease",
+                      border: "none",
+                      borderRadius: "8px",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#b02a37")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "#dc3545")
-                    }
                   >
                     Delete
                   </button>

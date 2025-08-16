@@ -12,7 +12,6 @@ export default function Login({ setUser }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    
     if (email && password) {
       const loggedUser = { email };
       setUser(loggedUser);

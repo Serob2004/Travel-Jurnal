@@ -1,33 +1,10 @@
+import { useTrips } from "./TripsContext";
+
 export default function Explore() {
+  const { trips } = useTrips();
+
   const backgroundImage =
     "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80";
-
-  const travelPosts = [
-    {
-      id: 1,
-      title: "Sunset in Bali",
-      location: "Bali, Indonesia",
-      date: "2023-06-15",
-      description: "Enjoyed the breathtaking sunsets and beautiful beaches in Bali.",
-      image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: 2,
-      title: "Hiking the Alps",
-      location: "Swiss Alps, Switzerland",
-      date: "2023-07-10",
-      description: "Challenging but rewarding hikes with stunning mountain views.",
-      image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: 3,
-      title: "City Lights of Tokyo",
-      location: "Tokyo, Japan",
-      date: "2023-08-05",
-      description: "Explored the vibrant city life and delicious street food.",
-      image: "https://images.unsplash.com/photo-1549692520-acc6669e2f0c?auto=format&fit=crop&w=600&q=80",
-    },
-  ];
 
   return (
     <div
@@ -42,7 +19,6 @@ export default function Explore() {
         boxSizing: "border-box",
       }}
     >
-    
       <div
         style={{
           position: "absolute",
@@ -54,7 +30,6 @@ export default function Explore() {
           zIndex: 1,
         }}
       />
-
       <div
         style={{
           position: "relative",
@@ -63,10 +38,15 @@ export default function Explore() {
           margin: "0 auto",
         }}
       >
-        <h1 style={{ textAlign: "center", marginBottom: "40px", fontSize: "3rem" }}>
+        <h1
+          style={{
+            textAlign: "center",
+            marginBottom: "40px",
+            fontSize: "3rem",
+          }}
+        >
           Explore Travel Posts
         </h1>
-
         <div
           style={{
             display: "grid",
@@ -74,7 +54,7 @@ export default function Explore() {
             gap: "20px",
           }}
         >
-          {travelPosts.map(({ id, title, location, date, description, image }) => (
+          {trips.map(({ id, title, location, date, description, image }) => (
             <div
               key={id}
               style={{
@@ -94,8 +74,16 @@ export default function Explore() {
               />
               <div style={{ padding: "15px" }}>
                 <h2 style={{ margin: "0 0 8px 0" }}>{title}</h2>
-                <p style={{ fontWeight: "600", margin: "0 0 6px 0" }}>{location}</p>
-                <p style={{ fontSize: "0.9rem", fontStyle: "italic", margin: "0 0 12px 0" }}>
+                <p style={{ fontWeight: "600", margin: "0 0 6px 0" }}>
+                  {location}
+                </p>
+                <p
+                  style={{
+                    fontSize: "0.9rem",
+                    fontStyle: "italic",
+                    margin: "0 0 12px 0",
+                  }}
+                >
                   {new Date(date).toLocaleDateString()}
                 </p>
                 <p style={{ margin: 0 }}>{description}</p>
