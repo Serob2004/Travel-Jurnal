@@ -6,6 +6,7 @@ export function TripsProvider({ children }) {
   const [trips, setTrips] = useState([
     {
       id: 1,
+      userId: 1,
       title: "Sunset in Bali",
       location: "Bali, Indonesia",
       date: "2023-06-15",
@@ -16,6 +17,7 @@ export function TripsProvider({ children }) {
     },
     {
       id: 2,
+      userId: 2,
       title: "Hiking the Alps",
       location: "Swiss Alps, Switzerland",
       date: "2023-07-10",
@@ -26,8 +28,8 @@ export function TripsProvider({ children }) {
     },
   ]);
 
-  const addTrip = (trip) => {
-    setTrips((prev) => [...prev, { id: Date.now(), ...trip }]);
+  const addTrip = (trip, userId) => {
+    setTrips((prev) => [...prev, { id: Date.now(), userId, ...trip }]);
   };
 
   const updateTrip = (id, updatedTrip) => {

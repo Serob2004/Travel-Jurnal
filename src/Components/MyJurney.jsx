@@ -12,22 +12,27 @@ export default function MyJournal({ user }) {
 
   useEffect(() => {
     if (!user) {
-      alert("You need to login for this page");
+      
       navigate("/login");
     }
   }, [user, navigate]);
 
+  const myTrips = user ? trips.filter((t) => t.userId === user.id) : [];
+
   const handleAdd = (e) => {
     e.preventDefault();
     if (newTrip.trim()) {
-      addTrip({
-        title: newTrip,
-        location: "Unknown",
-        date: new Date().toISOString().slice(0, 10),
-        description: "No description",
-        image:
-          "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
-      });
+      addTrip(
+        {
+          title: newTrip,
+          location: "Unknown",
+          date: new Date().toISOString().slice(0, 10),
+          description: "No description",
+          image:
+            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+        },
+        user.id
+      );
       setNewTrip("");
     }
   };
@@ -44,6 +49,7 @@ export default function MyJournal({ user }) {
   };
 
   return (
+    
     <div
       style={{
         minHeight: "100vh",
@@ -107,7 +113,7 @@ export default function MyJournal({ user }) {
           gap: "20px",
         }}
       >
-        {trips.map((trip) => (
+        {myTrips.map((trip) => (
           <div
             key={trip.id}
             style={{

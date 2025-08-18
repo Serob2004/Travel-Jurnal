@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Header from "./Components/header";
 import Home from "./Components/Home";
@@ -7,35 +6,36 @@ import Explore from "./Components/Explore";
 import Login from "./Components/Login";
 import MyJournal from "./Components/MyJurney";
 import { TripsProvider } from "./Components/TripsContext";
+import { AuthProvider, useAuth } from "./Components/AuthContext";
 
-function App() {
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? savedUser : null;
-  });
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
-    }
-  }, [user]);
+function AppContent() {
+  const { user, setUser } = useAuth(); 
 
   return (
     <>
-      <TripsProvider>
-        <Router>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/login" element={<Login setUser={setUser} />} />
-            <Route path="/my-journal" element={<MyJournal user={user} />} />
-          </Routes>
-        </Router>
-      </TripsProvider>
+      <Header user={user} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" /> : <Login setUser={setUser} />}
+        />
+        <Route path="/my-journal" element={<MyJournal user={user} />} />
+      </Routes>
     </>
+  );
+}
+
+function App() {
+  return (
+    <TripsProvider>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </TripsProvider>
   );
 }
 
