@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTrips } from "./TripsContext";
+import  useTripsStore  from "./useTripsStore";
 
 export default function MyJournal({ user }) {
   const navigate = useNavigate();
-  const { trips, addTrip, updateTrip, deleteTrip } = useTrips();
+  const { trips, addTrip, updateTrip, deleteTrip } = useTripsStore();
 
   const [newTrip, setNewTrip] = useState("");
   const [editId, setEditId] = useState(null);
@@ -12,7 +12,6 @@ export default function MyJournal({ user }) {
 
   useEffect(() => {
     if (!user) {
-      
       navigate("/login");
     }
   }, [user, navigate]);
@@ -49,7 +48,6 @@ export default function MyJournal({ user }) {
   };
 
   return (
-    
     <div
       style={{
         minHeight: "100vh",

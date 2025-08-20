@@ -1,7 +1,7 @@
-import { useTrips } from "./TripsContext";
+import  useTripsStore  from "./useTripsStore";
 
 export default function Explore() {
-  const { trips } = useTrips();
+  const { trips } = useTripsStore();
 
   const backgroundImage =
     "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80";

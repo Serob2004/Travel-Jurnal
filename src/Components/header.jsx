@@ -1,8 +1,8 @@
 import { NavLink } from "react-router-dom";
-import { useAuth } from "./AuthContext"; 
+import  useAuthStore  from "./useAuthStore";
 
 export default function Header() {
-  const { user, setUser } = useAuth(); 
+  const { user, setUser } = useAuthStore();
 
   const activeStyle = {
     fontWeight: "bold",
@@ -56,7 +56,7 @@ export default function Header() {
           {user && (
             <NavLink
               to="/"
-              onClick={() => setUser(null)} 
+              onClick={() => setUser(null)}
               style={{ color: "black", textDecoration: "none" }}
             >
               Logout
