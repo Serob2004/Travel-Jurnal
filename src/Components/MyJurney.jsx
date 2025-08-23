@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import  useTripsStore  from "./useTripsStore";
+import useTripsStore from "./useTripsStore";
 
 export default function MyJournal({ user }) {
   const navigate = useNavigate();
   const { trips, addTrip, updateTrip, deleteTrip } = useTripsStore();
 
   const [newTrip, setNewTrip] = useState("");
+  const [newLocation, setNewLocation] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newImage, setNewImage] = useState("");
   const [editId, setEditId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
 
@@ -24,15 +27,18 @@ export default function MyJournal({ user }) {
       addTrip(
         {
           title: newTrip,
-          location: "Unknown",
+          location: newLocation || "Unknown",
           date: new Date().toISOString().slice(0, 10),
-          description: "No description",
+          description: newDescription || "No description",
           image:
+            newImage ||
             "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
         },
         user.id
       );
       setNewTrip("");
+      setNewLocation("");
+      setNewDescription("");
     }
   };
 
@@ -61,7 +67,7 @@ export default function MyJournal({ user }) {
       <h1
         style={{ textAlign: "center", marginBottom: "40px", fontSize: "3rem" }}
       >
-        My Journal
+        Add Journal
       </h1>
 
       <form
@@ -70,6 +76,9 @@ export default function MyJournal({ user }) {
           maxWidth: "600px",
           margin: "0 auto 40px auto",
           display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
           gap: "15px",
         }}
       >
@@ -87,6 +96,49 @@ export default function MyJournal({ user }) {
             outline: "none",
           }}
         />
+        <input
+          type="text"
+          placeholder="Location"
+          value={newLocation}
+          onChange={(e) => setNewLocation(e.target.value)}
+          style={{
+            flexGrow: 1,
+            padding: "12px",
+            borderRadius: "12px",
+            border: "none",
+            fontSize: "16px",
+            outline: "none",
+          }}
+        />
+        <input
+          type="text"
+          placeholder="Description"
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.target.value)}
+          style={{
+            flexGrow: 1,
+            padding: "12px",
+            borderRadius: "12px",
+            border: "none",
+            fontSize: "16px",
+            outline: "none",
+          }}
+        />
+        <input
+          type="text"
+          placeholder="Your image URL"
+          value={newImage}
+          onChange={(e) => setNewImage(e.target.value)}
+          style={{
+            flexGrow: 1,
+            padding: "12px",
+            borderRadius: "12px",
+            border: "none",
+            fontSize: "16px",
+            outline: "none",
+          }}
+        />
+
         <button
           type="submit"
           style={{
@@ -101,6 +153,11 @@ export default function MyJournal({ user }) {
           Add
         </button>
       </form>
+      <h1
+        style={{ textAlign: "center", marginBottom: "40px", fontSize: "3rem" }}
+      >
+        Added Journals
+      </h1>
 
       <div
         style={{
