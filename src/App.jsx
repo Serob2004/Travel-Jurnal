@@ -9,6 +9,7 @@ import { lazy, Suspense } from "react";
 import "./App.css";
 import Header from "./Components/header";
 import useAuthStore from "./Components/useAuthStore";
+import { Toaster } from "react-hot-toast";
 
 const Home = lazy(() => import("./Components/Home"));
 const Explore = lazy(() => import("./Components/Explore"));
@@ -34,7 +35,7 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Layout />, 
+      element: <Layout />,
       children: [
         { index: true, element: <Home /> },
         { path: "explore", element: <Explore /> },
@@ -47,7 +48,12 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Toaster position="top-right" reverseOrder={false} />
+    </>
+  );
 }
 
 export default App;

@@ -14,9 +14,10 @@ export default function Explore() {
   const backgroundImage =
     "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80";
 
-  // Անհրաժեշտ է երկու sources-ները միացնել՝ առանց կրկնության
   const uniqueTrips = Array.isArray(trips)
-    ? trips.filter((t, index, self) => index === self.findIndex((s) => s.id === t.id))
+    ? trips.filter(
+        (t, index, self) => index === self.findIndex((s) => s.id === t.id)
+      )
     : [];
 
   return (
