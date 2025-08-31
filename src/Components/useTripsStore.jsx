@@ -1,48 +1,85 @@
-
 import { create } from "zustand";
+import ApiService from "./ApiService";
 
-const useTripsStore = create((set) => ({
-  trips: [
-    {
-      id: 1,
-      userId: 1,
-      title: "Sunset in Bali",
-      location: "Bali, Indonesia",
-      date: "2023-06-15",
-      description:
-        "Enjoyed the breathtaking sunsets and beautiful beaches in Bali.",
-      image:
-        "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: 2,
-      userId: 2,
-      title: "Hiking the Alps",
-      location: "Swiss Alps, Switzerland",
-      date: "2023-07-10",
-      description:
-        "Challenging but rewarding hikes with stunning mountain views.",
-      image:
-        "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=600&q=80",
-    },
-  ],
+const useTripsStore = create((set, get) => ({
+  trips: [],
+  apiFetched: false,
 
-  addTrip: (trip, userId) =>
-    set((state) => ({
-      trips: [...state.trips, { id: Date.now(), userId, ...trip }],
-    })),
+  
+  fetchTripsFromAPI: async () => {
+    if (get().apiFetched) return;
 
-  updateTrip: (id, updatedTrip) =>
-    set((state) => ({
-      trips: state.trips.map((t) =>
-        t.id === id ? { ...t, ...updatedTrip } : t
-      ),
-    })),
+    try {
+      const data = await ApiService.get(
+        "https://68af739ab91dfcdd62bc5866.mockapi.io/api/v1/journeys"
+      );
+      if (data) {
+        const formatted = data.map((d) => ({
+          id: d.id,
+          userId: d.creator_id || 0,
+          title: d.title,
+          location: d.location || "Unknown",
+          date: d.date
+            ? typeof d.date === "number"
+              ? new Date(d.date * 1000).toISOString().slice(0, 10)
+              : new Date(d.date).toISOString().slice(0, 10)
+            : new Date().toISOString().slice(0, 10),
+          description: d.description || d.short_description || "No description",
+          image: d.immage || "https://picsum.photos/300/200",
+        }));
 
-  deleteTrip: (id) =>
-    set((state) => ({
-      trips: state.trips.filter((t) => t.id !== id),
-    })),
+       
+        set({ trips: [...get().trips, ...formatted], apiFetched: true });
+      }
+    } catch (err) {
+      console.error("Error fetching trips:", err);
+    }
+  },
+
+
+  addTrip: async (trip, userId) => {
+    const newTrip = { ...trip, userId };
+    try {
+      const savedTrip = await ApiService.post(
+        "https://68af739ab91dfcdd62bc5866.mockapi.io/api/v1/journeys",
+        newTrip
+      );
+      if (savedTrip) set((state) => ({ trips: [...state.trips, savedTrip] }));
+    } catch (err) {
+      console.error("Error adding trip:", err);
+    }
+  },
+
+  
+  updateTrip: async (id, updatedTrip) => {
+    try {
+      const updated = await ApiService.put(
+        `https://68af739ab91dfcdd62bc5866.mockapi.io/api/v1/journeys/${id}`,
+        updatedTrip
+      );
+      if (updated)
+        set((state) => ({
+          trips: state.trips.map((t) =>
+            t.id === id ? { ...t, ...updatedTrip } : t
+          ),
+        }));
+    } catch (err) {
+      console.error("Error updating trip:", err);
+    }
+  },
+
+  
+  deleteTrip: async (id) => {
+    try {
+      const success = await ApiService.delete(
+        `https://68af739ab91dfcdd62bc5866.mockapi.io/api/v1/journeys/${id}`
+      );
+      if (success)
+        set((state) => ({ trips: state.trips.filter((t) => t.id !== id) }));
+    } catch (err) {
+      console.error("Error deleting trip:", err);
+    }
+  },
 }));
 
 export default useTripsStore;

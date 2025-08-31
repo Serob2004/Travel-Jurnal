@@ -19,6 +19,7 @@ export default function MyJournal({ user }) {
     }
   }, [user, navigate]);
 
+  
   const myTrips = user ? trips.filter((t) => t.userId === user.id) : [];
 
   const handleAdd = (e) => {
@@ -39,6 +40,7 @@ export default function MyJournal({ user }) {
       setNewTrip("");
       setNewLocation("");
       setNewDescription("");
+      setNewImage("");
     }
   };
 
@@ -153,6 +155,7 @@ export default function MyJournal({ user }) {
           Add
         </button>
       </form>
+
       <h1
         style={{ textAlign: "center", marginBottom: "40px", fontSize: "3rem" }}
       >

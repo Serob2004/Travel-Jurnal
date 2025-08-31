@@ -1,12 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useTripsStore from "./useTripsStore";
 
 export default function Explore() {
-  const { trips } = useTripsStore();
+  const trips = useTripsStore((s) => s.trips);
+  const fetchTripsFromAPI = useTripsStore((s) => s.fetchTripsFromAPI);
+
   const [selectedTrip, setSelectedTrip] = useState(null);
+
+  useEffect(() => {
+    fetchTripsFromAPI?.();
+  }, [fetchTripsFromAPI]);
 
   const backgroundImage =
     "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80";
+
+  // Անհրաժեշտ է երկու sources-ները միացնել՝ առանց կրկնության
+  const uniqueTrips = Array.isArray(trips)
+    ? trips.filter((t, index, self) => index === self.findIndex((s) => s.id === t.id))
+    : [];
 
   return (
     <div
@@ -49,6 +60,7 @@ export default function Explore() {
         >
           Explore Travel Posts
         </h1>
+
         <div
           style={{
             display: "grid",
@@ -56,33 +68,44 @@ export default function Explore() {
             gap: "20px",
           }}
         >
-          {trips.map((trip) => (
-            <div
-              key={trip.id}
-              style={{
-                backgroundColor: "rgba(255,255,255,0.1)",
-                borderRadius: "12px",
-                overflow: "hidden",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                color: "white",
-                cursor: "pointer",
-              }}
-              onClick={() => setSelectedTrip(trip)}
-            >
-              <img
-                src={trip.image}
-                alt={trip.title}
-                style={{ width: "100%", height: "160px", objectFit: "cover" }}
-              />
-              <div style={{ padding: "15px" }}>
-                <h2 style={{ margin: 0, textAlign: "center" }}>{trip.title}</h2>
+          {uniqueTrips.length > 0 ? (
+            uniqueTrips.map((trip) => (
+              <div
+                key={trip.id}
+                style={{
+                  backgroundColor: "rgba(255,255,255,0.1)",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+                onClick={() => setSelectedTrip(trip)}
+              >
+                <img
+                  src={trip.image}
+                  alt={trip.title}
+                  style={{
+                    width: "100%",
+                    height: "160px",
+                    objectFit: "cover",
+                  }}
+                />
+                <div style={{ padding: "15px" }}>
+                  <h2 style={{ margin: 0, textAlign: "center" }}>
+                    {trip.title}
+                  </h2>
+                </div>
               </div>
+            ))
+          ) : (
+            <div style={{ opacity: 0.9, textAlign: "center" }}>
+              Loading journeys...
             </div>
-          ))}
+          )}
         </div>
       </div>
 
-     
       {selectedTrip && (
         <div
           style={{
@@ -104,14 +127,13 @@ export default function Explore() {
               color: "black",
               borderRadius: "12px",
               padding: "20px",
-              maxWidth: "500px",  
+              maxWidth: "500px",
               width: "90%",
               boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
               position: "relative",
               textAlign: "center",
             }}
           >
-          
             <button
               onClick={() => setSelectedTrip(null)}
               style={{
