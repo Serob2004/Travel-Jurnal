@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "travel-journal-8cfe7"
-  }
+    "default": "travel-journal-8cfe7",
+    "\"default\": \"travel-journal-15a91\"": "travel-journal-15a91"
+  },
+  "targets": {},
+  "etags": {}
 }
