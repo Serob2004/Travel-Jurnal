@@ -10,18 +10,32 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
+  const cards = [
+    {
+      img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
+      title: "Relaxing Beach Destinations",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80",
+      title: "Explore Stunning Mountains",
+    },
+    {
+      img: "https://www.sportico.com/wp-content/uploads/2020/09/0911_IMG.jpg",
+      title: "Vibrant City Adventures",
+    },
+  ];
+
   return (
     <div
       style={{
-        height: "100vh",
-        width: "100vw",
+        width: "100%",
+        minHeight: "100vh",
         position: "relative",
-        overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
         color: "white",
+        paddingBottom: "80px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
     >
       <div
@@ -30,7 +44,7 @@ export default function Home() {
           top: 0,
           left: 0,
           width: "120%",
-          height: "120%",
+          height: "100%",
           backgroundImage:
             "url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1470&q=80')",
           backgroundSize: "cover",
@@ -38,8 +52,7 @@ export default function Home() {
           zIndex: -2,
           animation: "moveBG 30s linear infinite",
         }}
-      ></div>
-
+      />
       <div
         style={{
           position: "absolute",
@@ -50,57 +63,92 @@ export default function Home() {
           backgroundColor: "rgba(0,0,0,0.35)",
           zIndex: -1,
         }}
-      ></div>
+      />
 
-      <div style={{ position: "relative", zIndex: 1 }}>
-        <h1
-          style={{
-            fontSize: "3.5rem",
-            fontWeight: "bold",
-            marginBottom: "20px",
-            opacity: showContent ? 1 : 0,
-            transform: showContent ? "translateY(0)" : "translateY(-30px)",
-            transition: "all 1s ease",
-          }}
-        >
-          🌍 Welcome to the Travel Journal
-        </h1>
-        <p
-          style={{
-            fontSize: "1.5rem",
-            maxWidth: "650px",
-            margin: "0 auto",
-            lineHeight: "2rem",
-            opacity: showContent ? 1 : 0,
-            transform: showContent ? "translateY(0)" : "translateY(20px)",
-            transition: "all 1s ease 0.5s",
-          }}
-        >
-          Discover breathtaking destinations, capture your journeys, and get
-          inspired by fellow travelers.
+      <div
+        style={{
+          marginTop: "80px",
+          textAlign: "center",
+          zIndex: 1,
+          opacity: showContent ? 1 : 0,
+          transform: showContent ? "translateY(0)" : "translateY(-20px)",
+          transition: "all 1s ease",
+          padding: "0 10px",
+        }}
+      >
+        <h2 style={{ fontSize: "2rem", marginBottom: "5px" }}>
+          Welcome to My Travel Page 🌍
+        </h2>
+        <p style={{ fontSize: "1.1rem" }}>
+          Glad to have you here! Let’s explore the world together.
         </p>
-        <button
-          onClick={() => navigate("/explore")}
-          style={{
-            marginTop: "30px",
-            padding: "12px 28px",
-            fontSize: "1.2rem",
-            borderRadius: "50px",
-            border: "none",
-            cursor: "pointer",
-            background: "linear-gradient(90deg, #43cea2, #185a9d)",
-            color: "white",
-            fontWeight: "bold",
-            letterSpacing: "1px",
-            boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-            opacity: showContent ? 1 : 0,
-            transform: showContent ? "scale(1)" : "scale(0.7)",
-            transition: "all 0.8s ease 1s",
-          }}
-        >
-          Start Exploring ✈️
-        </button>
       </div>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "30px",
+          marginTop: "40px",
+          zIndex: 1,
+          width: "100%",
+          maxWidth: "1000px",
+          padding: "0 10px",
+        }}
+      >
+        {cards.map((card, index) => (
+          <div
+            key={index}
+            style={{
+              flex: "1 1 280px",
+              maxWidth: "300px",
+              backgroundColor: "rgba(255,255,255,0.1)",
+              padding: "15px",
+              borderRadius: "20px",
+              backdropFilter: "blur(10px)",
+              textAlign: "center",
+              opacity: showContent ? 1 : 0,
+              transform: showContent ? "translateY(0)" : "translateY(30px)",
+              transition: `opacity 0.8s ease ${
+                index * 0.2
+              }s, transform 0.8s ease ${index * 0.2}s`,
+            }}
+          >
+            <img
+              src={card.img}
+              alt={card.title}
+              style={{
+                width: "100%",
+                borderRadius: "15px",
+                marginBottom: "10px",
+              }}
+            />
+            <p>{card.title}</p>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={() => navigate("/explore")}
+        style={{
+          marginTop: "40px",
+          padding: "12px 28px",
+          fontSize: "1.2rem",
+          borderRadius: "50px",
+          border: "none",
+          cursor: "pointer",
+          background:
+            "linear-gradient(90deg, rgba(67,206,162,0.3), rgba(24,90,157,0.3))",
+          color: "white",
+          fontWeight: "bold",
+          letterSpacing: "1px",
+          boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+          zIndex: 1,
+        }}
+      >
+        Start Exploring ✈️
+      </button>
 
       <style>{`
         @keyframes moveBG {

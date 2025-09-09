@@ -9,6 +9,7 @@ import { lazy, Suspense } from "react";
 import "./App.css";
 import Header from "./Components/header";
 import useAuthStore from "./Components/useAuthStore";
+import Footer from "./Components/Footer";
 import { Toaster } from "react-hot-toast";
 
 const Home = lazy(() => import("./Components/Home"));
@@ -25,6 +26,7 @@ function Layout() {
       <Suspense fallback={<div>Loading...</div>}>
         <Outlet />
       </Suspense>
+      <Footer/>
     </>
   );
 }
