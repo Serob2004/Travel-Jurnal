@@ -4,8 +4,8 @@ import ApiService from "./ApiService";
 const useTripsStore = create((set, get) => ({
   trips: [],
   apiFetched: false,
+  favorites: [],
 
-  
   fetchTripsFromAPI: async () => {
     if (get().apiFetched) return;
 
@@ -28,14 +28,12 @@ const useTripsStore = create((set, get) => ({
           image: d.immage || "https://picsum.photos/300/200",
         }));
 
-       
         set({ trips: [...get().trips, ...formatted], apiFetched: true });
       }
     } catch (err) {
       console.error("Error fetching trips:", err);
     }
   },
-
 
   addTrip: async (trip, userId) => {
     const newTrip = { ...trip, userId };
@@ -50,7 +48,6 @@ const useTripsStore = create((set, get) => ({
     }
   },
 
-  
   updateTrip: async (id, updatedTrip) => {
     try {
       const updated = await ApiService.put(
@@ -68,7 +65,6 @@ const useTripsStore = create((set, get) => ({
     }
   },
 
-  
   deleteTrip: async (id) => {
     try {
       const success = await ApiService.delete(
@@ -80,6 +76,16 @@ const useTripsStore = create((set, get) => ({
       console.error("Error deleting trip:", err);
     }
   },
+  addFavorite: (trip) =>
+    set((state) => {
+      if (state.favorites.find((f) => f.id === trip.id)) return state;
+      return { favorites: [...state.favorites, trip] };
+    }),
+
+  removeFavorite: (id) =>
+    set((state) => ({
+      favorites: state.favorites.filter((f) => f.id !== id),
+    })),
 }));
 
 export default useTripsStore;

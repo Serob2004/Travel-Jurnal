@@ -1,11 +1,14 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import useTripsStore from "./useTripsStore";
+import useAuthStore from "./useAuthStore";
 
 export default function Explore() {
   const trips = useTripsStore((s) => s.trips);
   const fetchTripsFromAPI = useTripsStore((s) => s.fetchTripsFromAPI);
-
-  const [selectedTrip, setSelectedTrip] = useState(null);
+  const addFavorite = useTripsStore((s) => s.addFavorite);
+  const { user } = useAuthStore();
 
   useEffect(() => {
     fetchTripsFromAPI?.();
@@ -71,32 +74,64 @@ export default function Explore() {
         >
           {uniqueTrips.length > 0 ? (
             uniqueTrips.map((trip) => (
-              <div
-                key={trip.id}
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.1)",
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                  color: "white",
-                  cursor: "pointer",
-                }}
-                onClick={() => setSelectedTrip(trip)}
-              >
-                <img
-                  src={trip.image}
-                  alt={trip.title}
-                  style={{
-                    width: "100%",
-                    height: "160px",
-                    objectFit: "cover",
+              <div key={trip.id} style={{ position: "relative" }}>
+              
+                <button
+                  onClick={(e) => {
+                    e.preventDefault(); 
+                    if (!user) {
+                      toast.error("Please login to add favorites");
+                      return;
+                    }
+                    addFavorite(trip);
+                    toast.success("Added to favorites");
                   }}
-                />
-                <div style={{ padding: "15px" }}>
-                  <h2 style={{ margin: 0, textAlign: "center" }}>
-                    {trip.title}
-                  </h2>
-                </div>
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    background: "rgba(255,255,255,0.8)",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "40px",
+                    height: "40px",
+                    cursor: "pointer",
+                    zIndex: 3,
+                  }}
+                >
+                  ❤️
+                </button>
+
+                <Link
+                  to={`/trips/${trip.id}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: "rgba(255,255,255,0.1)",
+                      borderRadius: "12px",
+                      overflow: "hidden",
+                      boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+                      color: "white",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <img
+                      src={trip.image}
+                      alt={trip.title}
+                      style={{
+                        width: "100%",
+                        height: "160px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <div style={{ padding: "15px" }}>
+                      <h2 style={{ margin: 0, textAlign: "center" }}>
+                        {trip.title}
+                      </h2>
+                    </div>
+                  </div>
+                </Link>
               </div>
             ))
           ) : (
@@ -106,72 +141,6 @@ export default function Explore() {
           )}
         </div>
       </div>
-
-      {selectedTrip && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.6)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 999,
-          }}
-        >
-          <div
-            style={{
-              background: "white",
-              color: "black",
-              borderRadius: "12px",
-              padding: "20px",
-              maxWidth: "500px",
-              width: "90%",
-              boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
-              position: "relative",
-              textAlign: "center",
-            }}
-          >
-            <button
-              onClick={() => setSelectedTrip(null)}
-              style={{
-                position: "absolute",
-                top: "10px",
-                right: "10px",
-                background: "transparent",
-                border: "none",
-                fontSize: "1.5rem",
-                cursor: "pointer",
-              }}
-            >
-              ✖
-            </button>
-
-            <img
-              src={selectedTrip.image}
-              alt={selectedTrip.title}
-              style={{
-                width: "100%",
-                height: "250px",
-                objectFit: "cover",
-                borderRadius: "8px",
-                marginBottom: "15px",
-              }}
-            />
-            <h2>{selectedTrip.title}</h2>
-            <p style={{ fontWeight: "600", margin: "5px 0" }}>
-              {selectedTrip.location}
-            </p>
-            <p style={{ fontStyle: "italic", fontSize: "0.9rem" }}>
-              {new Date(selectedTrip.date).toLocaleDateString()}
-            </p>
-            <p>{selectedTrip.description}</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

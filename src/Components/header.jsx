@@ -49,9 +49,17 @@ export default function Header() {
         </NavLink>
       )}
       {user && (
-        <NavLink to="/" onClick={() => setUser(null)} style={linkStyle}>
-          Logout
-        </NavLink>
+        <>
+          <NavLink
+            to="/favorites"
+            style={({ isActive }) => (isActive ? activeStyle : linkStyle)}
+          >
+            Favorites
+          </NavLink>
+          <NavLink to="/" onClick={() => setUser(null)} style={linkStyle}>
+            Logout
+          </NavLink>
+        </>
       )}
       <NavLink
         to="/my-journal"
